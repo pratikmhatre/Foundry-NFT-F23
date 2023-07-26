@@ -23,25 +23,31 @@ contract MoodNft is ERC721 {
         s_sadImageUri = sadImageUri;
     }
 
+    function _baseURI() internal pure override returns (string memory) {
+        return "data:application/json;base64,";
+    }
+
     function tokenURI(
         uint256 tokenId
-    ) public view override returns (string memory) {
-        string memory imageUri = s_happyImageUri;
+    ) public view virtual override returns (string memory) {
+        string memory imageURI = s_happyImageUri;
+
         if (s_tokenIdToMood[tokenId] == Mood.SAD) {
-            imageUri = s_sadImageUri;
+            imageURI = s_sadImageUri;
         }
         return
             string(
                 abi.encodePacked(
-                    "data:application/json;base64,",
+                    _baseURI(),
                     Base64.encode(
                         bytes(
                             abi.encodePacked(
                                 '{"name":"',
-                                name(),
-                                '","description":"Describes the mood of its owner", "image":"',
-                                imageUri,
-                                '", "traits":[{"trait_type":"intensity", "value":100}]'
+                                name(), // You can add whatever name here
+                                '", "description":"An NFT that reflects the mood of the owner, 100% on Chain!", ',
+                                '"attributes": [{"trait_type": "moodiness", "value": 100}], "image":"',
+                                imageURI,
+                                '"}'
                             )
                         )
                     )
